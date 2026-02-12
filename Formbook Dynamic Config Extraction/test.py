@@ -4,10 +4,10 @@ from cape_audit.verifiers import (VerifyReportSectionHasMatching, VerifyReportSe
 
 class CapeDynamicTest(CapeDynamicTestBase):
     def __init__(self):
-        super().__init__(test_name="Amadey Detonation", analysis_package="exe")
-        self.set_description("Tests Amadey detonation")
+        super().__init__(test_name="Formbook Dynamic Config Extraction", analysis_package="exe")
+        self.set_description("Tests Formbook dynamic config extraction")
         self.set_zip_password(None)
-        self.set_task_timeout_seconds(30)
+        self.set_task_timeout_seconds(200)
         self.set_os_targets([OSTarget.WINDOWS])
         self.set_enforce_timeout(False)
         self.set_task_config({
@@ -27,21 +27,20 @@ class CapeDynamicTest(CapeDynamicTestBase):
         o_has_behaviour_trace.set_result_verifier(VerifyReportSectionHasContent("behavior"))
         self.add_objective(o_has_behaviour_trace)
 
-        # check if it caught the network comms
-        o_comms = CapeTestObjective(test=self, requirement="Malware comms detected to known CNC domain", objective_name="DetectComms", is_informational=False)
-        o_comms.set_success_msg("Malware comms detected")
-        o_comms.set_failure_msg("There may be a detonation problem, expected network comms not detected")
-        evaluator = VerifyReportSectionHasMatching(path="behavior/processes/calls", match_criteria={"api": "gethostbyname", "arguments/value": "nofawacat.com"})
-        o_comms.set_result_verifier(evaluator)
-        o_has_behaviour_trace.add_child_objective(o_comms)
+        # check there is a config containing C2
+        o_config = CapeTestObjective(test=self, requirement="Config extracted dynamically contains malware C2", objective_name="DetectConfig", is_informational=False)
+        o_config.set_success_msg("Config extracted")
+        o_config.set_failure_msg("There may be an extraction problem, expected config not detected")
+        evaluator = VerifyReportSectionHasMatching(path="CAPE/configs", match_criteria={"Formbook/C2": "www.riboute.com"})
+        o_config.set_result_verifier(evaluator)
+        o_has_behaviour_trace.add_child_objective(o_config)
 
-
-        # check process spawned
-        o_child_process = CapeTestObjective(test=self, requirement="Process spawned", objective_name="DetectProcessSpawn", is_informational=False)
-        o_child_process.set_success_msg("Child process spawned correctly")
-        o_child_process.set_failure_msg("There may be a detonation problem, expected child process not found")
-        o_child_process.set_result_verifier(VerifyReportHasExactString("Announced 32-bit process name: reg.exe"))
-        o_has_behaviour_trace.add_child_objective(o_child_process)
+        # check breakpoint(s) hit
+        o_breakpoint = CapeTestObjective(test=self, requirement="Breakpoint(s) hit", objective_name="DetectBreakpointHits", is_informational=False)
+        o_breakpoint.set_success_msg("CAPE intercepted breakpoint(s)")
+        o_breakpoint.set_failure_msg("There may be a problem with breakpoints not hitting")
+        o_breakpoint.set_result_verifier(VerifyReportHasExactString("CAPEExceptionFilter: breakpoint 2 hit"))
+        o_has_behaviour_trace.add_child_objective(o_breakpoint)
 
 
 if __name__ == "__main__":
