@@ -28,7 +28,7 @@ class CapeDynamicTest(CapeDynamicTestBase):
         self.add_objective(o_has_behaviour_trace)
 
         # check if it caught the network comms
-        o_comms = CapeTestObjective(test=self, requirement="("There may be a detonation problem, expected behavior log not found")
+        o_comms = CapeTestObjective(test=self, requirement="Malware comms detected to known CNC domain", objective_name="DetectComms", is_informational=False)
         o_comms.set_success_msg("Malware comms detected")
         o_comms.set_failure_msg("There may be a detonation problem, expected network comms not detected")
         evaluator = VerifyReportSectionHasMatching(path="behavior/processes/calls", match_criteria={"api": "GetAddrInfoExW", "arguments/value": "bara-seck.com"})
