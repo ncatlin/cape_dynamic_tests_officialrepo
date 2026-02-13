@@ -97,6 +97,27 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>:: 1. Define Paths
+set TEST_OUTPUT_DIR=$(SolutionDir)..\output\$(ProjectName)_32
+
+echo Deploying to %TEST_OUTPUT_DIR% 
+
+:: 2. Wipe and recreate the directory
+if exist "%TEST_OUTPUT_DIR%" rd /s /q "%TEST_OUTPUT_DIR%"
+mkdir "%TEST_OUTPUT_DIR%"
+
+echo Zipping
+:: 3. Zip the binary (Windows 10/11 have a built-in 'tar' command that handles zips)
+tar -a -c -f "%TEST_OUTPUT_DIR%\payload.zip" -C "$(OutDir)." "$(TargetFileName)"
+
+echo Copying support files
+:: 4. Copy the support files
+copy /y "$(ProjectDir)test.py" "%TEST_OUTPUT_DIR%\"
+
+echo Deployment to %TEST_OUTPUT_DIR% complete.</Command>
+      <Message>Create output dir in the solution directory (if it doesn't exist). Put the test py script and the zipped binary in it.</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -146,6 +167,7 @@ echo Copying support files
 copy /y "$(ProjectDir)test.py" "%TEST_OUTPUT_DIR%\"
 
 echo Deployment to %TEST_OUTPUT_DIR% complete.</Command>
+      <Message>Create output dir in the solution directory (if it doesn't exist). Put the test py script and the zipped binary in it.</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

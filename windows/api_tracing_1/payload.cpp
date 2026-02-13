@@ -12,22 +12,27 @@ fetch dropped files in various situations.
 
 #pragma comment(lib, "ws2_32.lib")
 
+#define SLEEP_VALUE_FLAG 1337
+#define MEMCPY_SIZE_FLAG 1234
+#define VALLOC_SIZE_FLAG 9867
+#define VPROTECT_SIZE_FLAG 5551
+
 int main() {
 	// Test 1: Basic test for fetching a file written to disk 
 	printf("FLAG_WRITECONSOLE_FLAG");
 
 	// Test 2: Can it get the argument of a sleep call
-	Sleep(1337);
+	Sleep(SLEEP_VALUE_FLAG);
 
 	// --- Memory Operations --- 
 	// 
-	LPVOID pMem = VirtualAlloc(NULL, 9867, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	LPVOID pMem = VirtualAlloc(NULL, VALLOC_SIZE_FLAG, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 	if (pMem) {
 		const char* data = "FLAG_MEMCPY_FLAG";
-		memcpy_s(pMem, 1234, data, strlen(data) + 1);
+		memcpy_s(pMem, MEMCPY_SIZE_FLAG, data, strlen(data) + 1);
 		DWORD oldProtect;
-		VirtualProtect(pMem, 5551, PAGE_EXECUTE_READ, &oldProtect); // Changing to executable is a high-signal event
-		VirtualFree(pMem, 9867, MEM_RELEASE);
+		VirtualProtect(pMem, VPROTECT_SIZE_FLAG, PAGE_EXECUTE_READ, &oldProtect);
+		VirtualFree(pMem, VALLOC_SIZE_FLAG, 0); // params don't need to be sensible, just get hooked
 	}
 
 	// --- File Operations ---
@@ -56,7 +61,8 @@ int main() {
 	addr.sin_port = htons(980);
 	inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 	connect(sock, (struct sockaddr*)&addr, sizeof(addr)); // This will likely fail, but the API call is traced
-	send(sock, "FLAG_NETWORK_SENT_DATA_FLAG", 27, 0);
+	const char* NSENDFLAG = "FLAG_NETWORK_SENT_DATA_FLAG";
+	send(sock, NSENDFLAG, (int)strlen(NSENDFLAG), 0);
 	closesocket(sock);
 	WSACleanup();
 
@@ -83,7 +89,7 @@ int main() {
 	{
 		if (CryptCreateHash(hProv, CALG_SHA_256, 0, 0, &hHash)) {
 			CryptHashData(hHash, (BYTE*)password, (DWORD)strlen(password), 0);
-			if (CryptDeriveKey(hProv, CALG_AES_256, hHash, 0, &hCKey)) {
+			if (CryptDeriveKey(hProv, CALG_AES_256, hHash, CRYPT_EXPORTABLE | (256 << 16), &hCKey)) {
 				CryptEncrypt(hCKey, 0, TRUE, 0, (BYTE*)data, &dataLen, bufLen);
 				CryptDecrypt(hCKey, 0, TRUE, 0, (BYTE*)data, &dataLen);
 				CryptDestroyKey(hCKey);

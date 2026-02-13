@@ -13,7 +13,7 @@ Each test should consist of a directory containing:
 
 * Extract as needed
 
-* Copy the test directories to your CAPE server, eg: /opt/CAPEv2/tests/audit_payloads/module_name
+* Copy the test directories to your CAPE server, eg: /opt/CAPEv2/tests/audit_packages/module_name
 
 * Reload the modules in the audit framework and test away
 
@@ -50,7 +50,7 @@ This has been developed and tested with Visual Studio 2026.
 
 The Visual Studio project executes post-build commands to create the audit package. Have a look at them when someone gives you a test and pay attention changes when reviewing pull requests.
 
-It's advisable to have the payload statically linked (/MT) to reduce library import issues executing the payload. If you need to distribute .dlls or other files then you may  need to use the archive analysis package.
+It's advisable to have the payload statically linked (/MT) to reduce library import issues executing the payload. If you need to distribute .dlls or other files then consider using the archive analysis package.
 
 Have an intial smoke test requirement to ensure that the payload is actually executing correctly. Not all VMs will have the same environment.
 

@@ -95,6 +95,7 @@ bool Check_NtQueryIP_ProcessDebugObjHandle()
 }
 
 
+#define HEAP_TAIL_CHECK_BYTES 0xABABABAB
 bool Check_HeapFlagPreWin10()
 {
 	//https://anti-debug.checkpoint.com/techniques/debug-flags.html#manual-checks-heap-protection
@@ -106,7 +107,7 @@ bool Check_HeapFlagPreWin10()
 	} while (HeapEntry.wFlags != PROCESS_HEAP_ENTRY_BUSY);
 
 	PVOID pOverlapped = (PBYTE)HeapEntry.lpData + HeapEntry.cbData;
-	return ((DWORD)(*(PDWORD)pOverlapped) == 0xABABABAB);
+	return ((DWORD)(*(PDWORD)pOverlapped) == HEAP_TAIL_CHECK_BYTES);
 }
 
 bool Check_KuserKernDebug()
