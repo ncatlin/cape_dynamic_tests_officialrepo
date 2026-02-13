@@ -3,8 +3,8 @@
 A collection of example test cases to demonstrate the CAPE audit framework
 
 Each test should consist of a directory containing:
-	payload.zip - Should contain one item (though this can be an archive). The content will be submitted to CAPE as the analysis target.
-	test.py - describes and evaluates the results of the Test using the cape_audit module (currently: https://github.com/CAPESandbox/cape_audit)
+	payload.zip - Should contain one file (which can be an archive). The content will be submitted to CAPE as the analysis target.
+	test.py - describes and evaluates the results of the Test using the cape_audit module (https://github.com/CAPESandbox/cape_audit)
 
 
 # How to deploy tests

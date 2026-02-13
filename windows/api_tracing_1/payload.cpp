@@ -39,7 +39,10 @@ int main() {
 	HANDLE hFile = CreateFileA("FLAG_CREATED_FILENAME_FLAG.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE) {
 		DWORD written;
-		WriteFile(hFile, "FLAG_WRITTEN_FILE_CONTENT_FLAG", 10, &written, NULL);
+		WriteFile(hFile, 
+			"FLAG_WRITTEN_FILE_CONTENT_FLAG", 
+			(DWORD)strlen("FLAG_WRITTEN_FILE_CONTENT_FLAG"),
+			&written, NULL);
 		CloseHandle(hFile);
 		DeleteFileA("FLAG_CREATED_FILENAME_FLAG.txt");
 	}

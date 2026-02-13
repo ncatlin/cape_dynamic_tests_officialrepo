@@ -41,6 +41,7 @@ bool Check_NtQueryIP_ProcessDebugPort()
 	return false;
 }
 
+#define PROCESS_DEBUG_FLAGS 0x1f
 bool Check_NtQueryIP_ProcessDebugFlags()
 {
 	//https://anti-debug.checkpoint.com/techniques/debug-flags.html#using-win32-api-ntqueryinformationprocess-processdebugflags
@@ -55,7 +56,7 @@ bool Check_NtQueryIP_ProcessDebugFlags()
 			DWORD dwProcessDebugFlags, dwReturned;
 			NTSTATUS status = pfnNtQueryInformationProcess(
 				GetCurrentProcess(),
-				(PROCESSINFOCLASS)0x1f,//ProcessDebugFlags
+				(PROCESSINFOCLASS)PROCESS_DEBUG_FLAGS,
 				&dwProcessDebugFlags,
 				sizeof(DWORD),
 				&dwReturned);
@@ -66,7 +67,7 @@ bool Check_NtQueryIP_ProcessDebugFlags()
 	return false;
 }
 
-
+#define PROCESS_DEBUG_OBJ_HANDLE 0x1e
 bool Check_NtQueryIP_ProcessDebugObjHandle()
 {	
 	//https://anti-debug.checkpoint.com/techniques/debug-flags.html#using-win32-api-ntqueryinformationprocess-processdebugobjecthandle
@@ -80,7 +81,7 @@ bool Check_NtQueryIP_ProcessDebugObjHandle()
 		{
 			DWORD dwReturned;
 			HANDLE hProcessDebugObject = 0;
-			const DWORD ProcessDebugObjectHandle = 0x1e;
+			const DWORD ProcessDebugObjectHandle = PROCESS_DEBUG_OBJ_HANDLE;
 			NTSTATUS status = pfnNtQueryInformationProcess(
 				GetCurrentProcess(),
 				(PROCESSINFOCLASS)ProcessDebugObjectHandle,
